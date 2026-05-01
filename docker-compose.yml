@@ -1,0 +1,10 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: bookshelf-db
+    environment:
+      POSTGRES_DB: bookshelf
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+    ports:
+      - "5434:5432"
