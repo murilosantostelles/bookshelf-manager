@@ -93,5 +93,30 @@ public class LivroService {
     }
 
     //put patch
+    public LivroResponseDTO updateLivro(Long id, LivroRequestDTO dto){
+        Livro livro = livroRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Livro não encontrado"));
+        Autor autor = autorRepository.findById(dto.autorId())
+                .orElseThrow(()-> new RuntimeException("Autor não encontrado"));
+        Categoria categoria = categoriaRepository.findById(dto.categoriaId())
+                .orElseThrow(()-> new RuntimeException("Categoria não encontrada"));
 
+        livro.setTitulo(dto.titulo());
+        livro.setEditora(dto.editora());
+        livro.setDescricao(dto.descricao());
+        livro.setCapaUrl(dto.capaUrl());
+        livro.setStatus(dto.status());
+        livro.setAutor(autor);
+        livro.setCategoria(categoria);
+
+        Livro livroAtualizado = livroRepository.save(livro);
+        return toResponseDTO(livroAtualizado);
+    }
+
+    //delete
+    public void deleteLivro(Long id){
+        Livro livro = livroRepository.findById(id)
+                        .orElseThrow(() -> new RuntimeException("Livro não encontrado"));
+        livroRepository.delete(livro);
+    }
 }
