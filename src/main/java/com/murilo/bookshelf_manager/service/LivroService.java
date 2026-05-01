@@ -9,7 +9,10 @@ import com.murilo.bookshelf_manager.repository.AutorRepository;
 import com.murilo.bookshelf_manager.repository.CategoriaRepository;
 import com.murilo.bookshelf_manager.repository.LivroRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
 
 @Service
 @RequiredArgsConstructor
@@ -19,6 +22,7 @@ public class LivroService {
     private final AutorRepository autorRepository;
     private final CategoriaRepository categoriaRepository;
 
+    //post
     public LivroResponseDTO createLivro(LivroRequestDTO dto){
         Autor autor = autorRepository.findById(dto.autorId())
                 .orElseThrow(() -> new RuntimeException("Autor não encontrado"));
@@ -48,4 +52,46 @@ public class LivroService {
                 livroSalvo.getCategoria().getNome()
         );
     }
+
+    //get
+    public Page<LivroResponseDTO> findAllLivros(Pageable pageable) {
+        return livroRepository.findAll(pageable)
+                .map(this::toResponseDTO);
+    }
+
+    public Page<LivroResponseDTO> findByTitulo( String titulo, Pageable pageable){
+        return livroRepository.findByTituloContainingIgnoreCase(titulo,pageable)
+                .map(this::toResponseDTO);
+    }
+
+    public Page<LivroResponseDTO> findByAutor(String nome, Pageable pageable){
+        return livroRepository.findByAutorNomeContainingIgnoreCase(nome,pageable)
+                .map(this::toResponseDTO);
+    }
+
+    public Page<LivroResponseDTO> findByCategoria(String nome, Pageable pageable){
+        return livroRepository.findByCategoriaNomeContainingIgnoreCase(nome, pageable)
+                .map(this::toResponseDTO);
+    }
+
+    public Page<LivroResponseDTO> findByEditora(String editora, Pageable pageable){
+        return livroRepository.findByEditoraContainingIgnoreCase(editora,pageable)
+                .map(this::toResponseDTO);
+    }
+
+    private LivroResponseDTO toResponseDTO(Livro livro) {
+        return new LivroResponseDTO(
+                livro.getId(),
+                livro.getTitulo(),
+                livro.getEditora(),
+                livro.getDescricao(),
+                livro.getCapaUrl(),
+                livro.getStatus(),
+                livro.getAutor().getNome(),
+                livro.getCategoria().getNome()
+        );
+    }
+
+    //put patch
+
 }
