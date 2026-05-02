@@ -56,6 +56,12 @@ public class LivroService {
                 .map(this::toResponseDTO);
     }
 
+    public LivroResponseDTO findLivroById(Long id){
+        Livro livro = livroRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Livro não encontrado"));
+        return toResponseDTO(livro);
+    }
+
     public Page<LivroResponseDTO> findByTitulo( String titulo, Pageable pageable){
         return livroRepository.findByTituloContainingIgnoreCase(titulo,pageable)
                 .map(this::toResponseDTO);
