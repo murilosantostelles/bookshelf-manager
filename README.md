@@ -1,1 +1,1 @@
-<img width="786" height="569" alt="image" src="https://github.com/user-attachments/assets/19903b85-31eb-4291-98b7-a7811f037ffc" />
+<img width="1072" height="598" alt="modelagemLogicaBookshelfManager" src="https://github.com/user-attachments/assets/aa34a7f4-3ab3-4520-8036-50a54deadfff" />
