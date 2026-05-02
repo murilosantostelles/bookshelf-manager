@@ -13,6 +13,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +23,7 @@ public class LivroService {
     private final LivroRepository livroRepository;
     private final AutorRepository autorRepository;
     private final CategoriaRepository categoriaRepository;
+    private final PalavraChaveService palavraChaveService;
 
     //post
     public LivroResponseDTO createLivro(LivroRequestDTO dto){
@@ -41,16 +44,10 @@ public class LivroService {
 
         Livro livroSalvo = livroRepository.save(livro);
 
-        return new LivroResponseDTO(
-                livroSalvo.getId(),
-                livroSalvo.getTitulo(),
-                livroSalvo.getEditora(),
-                livroSalvo.getDescricao(),
-                livroSalvo.getCapaUrl(),
-                livroSalvo.getStatus(),
-                livroSalvo.getAutor().getNome(),
-                livroSalvo.getCategoria().getNome()
-        );
+        palavraChaveService.savePalavrasChave(dto.palavrasChave(),livroSalvo);
+
+
+        return toResponseDTO(livroSalvo);
     }
 
     //get
@@ -74,12 +71,18 @@ public class LivroService {
                 .map(this::toResponseDTO);
     }
 
+    public Page<LivroResponseDTO> findByPalavraChave(String palavra, Pageable pageable){
+        return livroRepository.findByPalavrasChaveContainingIgnoreCase(palavra,pageable)
+                .map(this::toResponseDTO);
+    }
+
     public Page<LivroResponseDTO> findByEditora(String editora, Pageable pageable){
         return livroRepository.findByEditoraContainingIgnoreCase(editora,pageable)
                 .map(this::toResponseDTO);
     }
 
     private LivroResponseDTO toResponseDTO(Livro livro) {
+        List<String> palavrasChave = palavraChaveService.findPalavrasByLivro(livro.getId());
         return new LivroResponseDTO(
                 livro.getId(),
                 livro.getTitulo(),
@@ -88,7 +91,8 @@ public class LivroService {
                 livro.getCapaUrl(),
                 livro.getStatus(),
                 livro.getAutor().getNome(),
-                livro.getCategoria().getNome()
+                livro.getCategoria().getNome(),
+                palavrasChave
         );
     }
 
@@ -108,6 +112,8 @@ public class LivroService {
         livro.setStatus(dto.status());
         livro.setAutor(autor);
         livro.setCategoria(categoria);
+        palavraChaveService.deletePalavrasChave(id);
+        palavraChaveService.savePalavrasChave(dto.palavrasChave(), livro);
 
         Livro livroAtualizado = livroRepository.save(livro);
         return toResponseDTO(livroAtualizado);
@@ -117,6 +123,7 @@ public class LivroService {
     public void deleteLivro(Long id){
         Livro livro = livroRepository.findById(id)
                         .orElseThrow(() -> new RuntimeException("Livro não encontrado"));
+        palavraChaveService.deletePalavrasChave(id);
         livroRepository.delete(livro);
     }
 }

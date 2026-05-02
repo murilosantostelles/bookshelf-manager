@@ -9,7 +9,5 @@ import java.util.List;
 
 public interface PalavraChaveRepository extends JpaRepository<PalavraChave,Long> {
 
-    Page<PalavraChave> findByPalavraContainingIgnoreCase(String palavra, Pageable pageable);
-
     List<PalavraChave> findByLivroId(Long livroId);
 }
