@@ -50,7 +50,7 @@ public class AutorService {
         return new AutorResponseDTO(autorEncontrado.getId(), autorEncontrado.getNome());
     }
 
-    //put, patch
+    //put
     public AutorResponseDTO updateAutor(Long id, AutorRequestDTO dto){
         Autor autor = autorRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Autor não encontrado"));
