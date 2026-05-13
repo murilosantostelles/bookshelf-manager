@@ -31,7 +31,7 @@ public class LivroController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<LivroResponseDTO> findById(Long id){
+    public ResponseEntity<LivroResponseDTO> findById(@PathVariable Long id){
         return ResponseEntity.ok(livroService.findLivroById(id));
     }
 
