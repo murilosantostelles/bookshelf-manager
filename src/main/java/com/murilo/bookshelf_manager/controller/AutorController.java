@@ -3,6 +3,7 @@ package com.murilo.bookshelf_manager.controller;
 import com.murilo.bookshelf_manager.dto.autor.AutorRequestDTO;
 import com.murilo.bookshelf_manager.dto.autor.AutorResponseDTO;
 import com.murilo.bookshelf_manager.entity.Autor;
+import com.murilo.bookshelf_manager.exception.NotFoundException;
 import com.murilo.bookshelf_manager.service.AutorService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -42,7 +43,6 @@ public class AutorController {
     public ResponseEntity<AutorResponseDTO> findById(@PathVariable Long id){
         AutorResponseDTO autor = autorService.findById(id);
         return ResponseEntity.ok().body(autor);
-
     }
 
     @PutMapping("/{id}")

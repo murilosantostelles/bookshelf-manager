@@ -3,6 +3,7 @@ package com.murilo.bookshelf_manager.service;
 import com.murilo.bookshelf_manager.dto.autor.AutorRequestDTO;
 import com.murilo.bookshelf_manager.dto.autor.AutorResponseDTO;
 import com.murilo.bookshelf_manager.entity.Autor;
+import com.murilo.bookshelf_manager.exception.NotFoundException;
 import com.murilo.bookshelf_manager.repository.AutorRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -45,7 +46,7 @@ public class AutorService {
 
     public AutorResponseDTO findById(Long id){
         Autor autorEncontrado = autorRepository.findById(id)
-                .orElseThrow(()-> new RuntimeException("Autor não encontrado"));
+                .orElseThrow(()-> new NotFoundException("Autor não encontrado"));
 
         return new AutorResponseDTO(autorEncontrado.getId(), autorEncontrado.getNome());
     }
@@ -53,7 +54,7 @@ public class AutorService {
     //put
     public AutorResponseDTO updateAutor(Long id, AutorRequestDTO dto){
         Autor autor = autorRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Autor não encontrado"));
+                .orElseThrow(() -> new NotFoundException("Autor não encontrado"));
 
         autor.setNome(dto.nome());
 
@@ -66,7 +67,7 @@ public class AutorService {
     //delete
     public void deleteAutor(Long id){
         Autor autor = autorRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Autor não encontrado"));
+                .orElseThrow(() -> new NotFoundException("Autor não encontrado"));
 
         autorRepository.delete(autor);
     }

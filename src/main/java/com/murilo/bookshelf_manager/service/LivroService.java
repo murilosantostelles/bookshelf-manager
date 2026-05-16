@@ -5,6 +5,7 @@ import com.murilo.bookshelf_manager.dto.livro.LivroResponseDTO;
 import com.murilo.bookshelf_manager.entity.Autor;
 import com.murilo.bookshelf_manager.entity.Categoria;
 import com.murilo.bookshelf_manager.entity.Livro;
+import com.murilo.bookshelf_manager.exception.NotFoundException;
 import com.murilo.bookshelf_manager.repository.AutorRepository;
 import com.murilo.bookshelf_manager.repository.CategoriaRepository;
 import com.murilo.bookshelf_manager.repository.LivroRepository;
@@ -28,10 +29,10 @@ public class LivroService {
     //post
     public LivroResponseDTO createLivro(LivroRequestDTO dto){
         Autor autor = autorRepository.findById(dto.autorId())
-                .orElseThrow(() -> new RuntimeException("Autor não encontrado"));
+                .orElseThrow(() -> new NotFoundException("Autor não encontrado"));
 
         Categoria categoria = categoriaRepository.findById(dto.categoriaId())
-                .orElseThrow(()-> new RuntimeException("Categoria não encontrada"));
+                .orElseThrow(()-> new NotFoundException("Categoria não encontrada"));
 
         Livro livro = new Livro();
         livro.setTitulo(dto.titulo());
@@ -58,7 +59,7 @@ public class LivroService {
 
     public LivroResponseDTO findLivroById(Long id){
         Livro livro = livroRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Livro não encontrado"));
+                .orElseThrow(() -> new NotFoundException("Livro não encontrado"));
         return toResponseDTO(livro);
     }
 
@@ -105,11 +106,11 @@ public class LivroService {
     //put patch
     public LivroResponseDTO updateLivro(Long id, LivroRequestDTO dto){
         Livro livro = livroRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Livro não encontrado"));
+                .orElseThrow(() -> new NotFoundException("Livro não encontrado"));
         Autor autor = autorRepository.findById(dto.autorId())
-                .orElseThrow(()-> new RuntimeException("Autor não encontrado"));
+                .orElseThrow(()-> new NotFoundException("Autor não encontrado"));
         Categoria categoria = categoriaRepository.findById(dto.categoriaId())
-                .orElseThrow(()-> new RuntimeException("Categoria não encontrada"));
+                .orElseThrow(()-> new NotFoundException("Categoria não encontrada"));
 
         livro.setTitulo(dto.titulo());
         livro.setEditora(dto.editora());
@@ -128,7 +129,7 @@ public class LivroService {
     //delete
     public void deleteLivro(Long id){
         Livro livro = livroRepository.findById(id)
-                        .orElseThrow(() -> new RuntimeException("Livro não encontrado"));
+                        .orElseThrow(() -> new NotFoundException("Livro não encontrado"));
         palavraChaveService.deletePalavrasChave(id);
         livroRepository.delete(livro);
     }

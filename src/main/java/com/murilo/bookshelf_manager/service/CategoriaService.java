@@ -3,6 +3,7 @@ package com.murilo.bookshelf_manager.service;
 import com.murilo.bookshelf_manager.dto.categoria.CategoriaRequestDTO;
 import com.murilo.bookshelf_manager.dto.categoria.CategoriaResponseDTO;
 import com.murilo.bookshelf_manager.entity.Categoria;
+import com.murilo.bookshelf_manager.exception.NotFoundException;
 import com.murilo.bookshelf_manager.repository.CategoriaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -50,16 +51,15 @@ public class CategoriaService {
 
     public CategoriaResponseDTO findById (Long id){
         Categoria categoriaEncontrada = categoriaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Categoria não encontrada"));
+                .orElseThrow(() -> new NotFoundException("Categoria não encontrada"));
 
         return new CategoriaResponseDTO(categoriaEncontrada.getId(),categoriaEncontrada.getNome(),categoriaEncontrada.getSubcategoria());
     }
 
     //put
-
     public CategoriaResponseDTO updateCategoria(Long id, CategoriaRequestDTO dto){
         Categoria categoriaEncontrada = categoriaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Categoria não encontrada"));
+                .orElseThrow(() -> new NotFoundException("Categoria não encontrada"));
 
         categoriaEncontrada.setNome(dto.nome());
         categoriaEncontrada.setSubcategoria(dto.subcategoria());
@@ -72,7 +72,7 @@ public class CategoriaService {
     //delete
     public void deleteCategoria(Long id){
         Categoria categoriaEncontrada = categoriaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Categoria não encontrada"));
+                .orElseThrow(() -> new NotFoundException("Categoria não encontrada"));
 
         categoriaRepository.delete(categoriaEncontrada);
     }
