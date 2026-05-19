@@ -3,8 +3,10 @@ package com.murilo.bookshelf_manager.service;
 import com.murilo.bookshelf_manager.dto.autor.AutorRequestDTO;
 import com.murilo.bookshelf_manager.dto.autor.AutorResponseDTO;
 import com.murilo.bookshelf_manager.entity.Autor;
+import com.murilo.bookshelf_manager.exception.BusinessException;
 import com.murilo.bookshelf_manager.exception.NotFoundException;
 import com.murilo.bookshelf_manager.repository.AutorRepository;
+import com.murilo.bookshelf_manager.repository.LivroRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +17,7 @@ import java.util.List;
 public class AutorService {
 
     private final AutorRepository autorRepository;
+    private final LivroRepository livroRepository;
 
     //post
     public AutorResponseDTO createAutor(AutorRequestDTO dto){
@@ -69,8 +72,10 @@ public class AutorService {
         Autor autor = autorRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Autor não encontrado"));
 
+        if(livroRepository.existsByAutorId(id)) {
+            throw new BusinessException("Não é possível excluir um autor que possui livros cadastrados");
+        }
+
         autorRepository.delete(autor);
     }
-
-
 }
