@@ -10,6 +10,8 @@ import com.murilo.bookshelf_manager.repository.AutorRepository;
 import com.murilo.bookshelf_manager.repository.CategoriaRepository;
 import com.murilo.bookshelf_manager.repository.LivroRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -27,6 +29,7 @@ public class LivroService {
     private final PalavraChaveService palavraChaveService;
 
     //post
+    @CacheEvict(value = "livros", allEntries = true)
     public LivroResponseDTO createLivro(LivroRequestDTO dto){
         Autor autor = autorRepository.findById(dto.autorId())
                 .orElseThrow(() -> new NotFoundException("Autor não encontrado"));
@@ -52,11 +55,13 @@ public class LivroService {
     }
 
     //get
+    @Cacheable("livros")
     public Page<LivroResponseDTO> findAllLivros(Pageable pageable) {
         return livroRepository.findAll(pageable)
                 .map(this::toResponseDTO);
     }
 
+    @Cacheable("livros")
     public LivroResponseDTO findLivroById(Long id){
         Livro livro = livroRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Livro não encontrado"));
@@ -104,6 +109,7 @@ public class LivroService {
     }
 
     //put patch
+    @CacheEvict(value = "livros", allEntries = true)
     public LivroResponseDTO updateLivro(Long id, LivroRequestDTO dto){
         Livro livro = livroRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Livro não encontrado"));
@@ -127,6 +133,7 @@ public class LivroService {
     }
 
     //delete
+    @CacheEvict(value = "livros", allEntries = true)
     public void deleteLivro(Long id){
         Livro livro = livroRepository.findById(id)
                         .orElseThrow(() -> new NotFoundException("Livro não encontrado"));

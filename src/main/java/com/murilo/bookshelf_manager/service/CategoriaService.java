@@ -6,6 +6,8 @@ import com.murilo.bookshelf_manager.entity.Categoria;
 import com.murilo.bookshelf_manager.exception.NotFoundException;
 import com.murilo.bookshelf_manager.repository.CategoriaRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,6 +19,7 @@ public class CategoriaService {
 
 
     //post
+    @CacheEvict(value = "categorias", allEntries = true)
     public CategoriaResponseDTO createCategoria(CategoriaRequestDTO dto){
         Categoria categoria = new Categoria();
         categoria.setNome(dto.nome());
@@ -28,6 +31,7 @@ public class CategoriaService {
     }
 
     //get
+    @Cacheable("categorias")
     public List<CategoriaResponseDTO> findAllCategorias(){
         return categoriaRepository.findAll()
                 .stream()
@@ -57,6 +61,7 @@ public class CategoriaService {
     }
 
     //put
+    @CacheEvict(value = "categorias", allEntries = true)
     public CategoriaResponseDTO updateCategoria(Long id, CategoriaRequestDTO dto){
         Categoria categoriaEncontrada = categoriaRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Categoria não encontrada"));
@@ -70,6 +75,7 @@ public class CategoriaService {
     }
 
     //delete
+    @CacheEvict(value = "categorias", allEntries = true)
     public void deleteCategoria(Long id){
         Categoria categoriaEncontrada = categoriaRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Categoria não encontrada"));

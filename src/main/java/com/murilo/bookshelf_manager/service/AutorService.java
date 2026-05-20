@@ -8,6 +8,8 @@ import com.murilo.bookshelf_manager.exception.NotFoundException;
 import com.murilo.bookshelf_manager.repository.AutorRepository;
 import com.murilo.bookshelf_manager.repository.LivroRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,6 +22,7 @@ public class AutorService {
     private final LivroRepository livroRepository;
 
     //post
+    @CacheEvict(value = "autores", allEntries = true)
     public AutorResponseDTO createAutor(AutorRequestDTO dto){
         Autor autor = new Autor();
         autor.setNome(dto.nome());
@@ -32,6 +35,7 @@ public class AutorService {
 
 
     //get
+    @Cacheable("autores")
     public List<AutorResponseDTO> findAllAutores(){
         return autorRepository.findAll()
                 .stream()
@@ -55,6 +59,7 @@ public class AutorService {
     }
 
     //put
+    @CacheEvict(value = "autores", allEntries = true)
     public AutorResponseDTO updateAutor(Long id, AutorRequestDTO dto){
         Autor autor = autorRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Autor não encontrado"));
@@ -68,6 +73,7 @@ public class AutorService {
     }
 
     //delete
+    @CacheEvict(value = "autores", allEntries = true)
     public void deleteAutor(Long id){
         Autor autor = autorRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Autor não encontrado"));
