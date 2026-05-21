@@ -3,6 +3,7 @@ package com.murilo.bookshelf_manager.service;
 import com.murilo.bookshelf_manager.dto.autor.AutorRequestDTO;
 import com.murilo.bookshelf_manager.dto.autor.AutorResponseDTO;
 import com.murilo.bookshelf_manager.entity.Autor;
+import com.murilo.bookshelf_manager.exception.BusinessException;
 import com.murilo.bookshelf_manager.exception.NotFoundException;
 import com.murilo.bookshelf_manager.repository.AutorRepository;
 import com.murilo.bookshelf_manager.repository.LivroRepository;
@@ -75,5 +76,41 @@ public class AutorServiceTest {
                 .hasMessage("Autor não encontrado");
 
         verify(autorRepository, times(1)).findById(2L);
+    }
+
+    @Test
+    void deveatualizarAutor(){
+        when(autorRepository.findById(1L)).thenReturn(Optional.of(autor));
+        when(autorRepository.save(any(Autor.class))).thenReturn(autor);
+
+        AutorResponseDTO autorResponseDTO = autorService.updateAutor(1L, autorRequestDTO);
+
+        assertThat(autorResponseDTO).isNotNull();
+        assertThat(autorResponseDTO.id()).isEqualTo(1L);
+        assertThat(autorResponseDTO.nome()).isEqualTo("Machado de Assis");
+        verify(autorRepository, times(1)).findById(1L);
+        verify(autorRepository, times(1)).save(any(Autor.class));
+    }
+
+    @Test
+    void deveImpedirExclusaoDeAutorComLivros(){
+        when(autorRepository.findById(1L)).thenReturn(Optional.of(autor));
+        when(livroRepository.existsByAutorId(1L)).thenReturn(true);
+
+        assertThatThrownBy(() -> autorService.deleteAutor(1L))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("Não é possível excluir um autor que possui livros cadastrados");
+
+        verify(autorRepository, never()).delete(any(Autor.class));
+    }
+
+    @Test
+    void deveDeletarAutor(){
+        when(autorRepository.findById(1L)).thenReturn(Optional.of(autor));
+        when(livroRepository.existsByAutorId(1L)).thenReturn(false);
+
+        autorService.deleteAutor(1L);
+
+        verify(autorRepository, times(1)).delete(autor);
     }
 }
