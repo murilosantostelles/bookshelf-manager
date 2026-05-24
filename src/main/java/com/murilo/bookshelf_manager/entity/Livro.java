@@ -1,7 +1,6 @@
 package com.murilo.bookshelf_manager.entity;
 
 import com.murilo.bookshelf_manager.enums.Status;
-import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -55,4 +54,9 @@ public class Livro {
 
     @OneToMany(mappedBy = "livro", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PalavraChave> palavrasChave;
+
+    @ManyToOne
+    @JoinColumn(name = "id_usuario", nullable = false)
+    @NotNull
+    private Usuario usuario;
 }
