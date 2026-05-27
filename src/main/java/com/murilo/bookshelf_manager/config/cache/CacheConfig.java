@@ -1,4 +1,4 @@
-package com.murilo.bookshelf_manager.config;
+package com.murilo.bookshelf_manager.config.cache;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import org.springframework.cache.CacheManager;
