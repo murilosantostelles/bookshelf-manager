@@ -3,8 +3,10 @@ package com.murilo.bookshelf_manager.service;
 import com.murilo.bookshelf_manager.dto.categoria.CategoriaRequestDTO;
 import com.murilo.bookshelf_manager.dto.categoria.CategoriaResponseDTO;
 import com.murilo.bookshelf_manager.entity.Categoria;
+import com.murilo.bookshelf_manager.exception.BusinessException;
 import com.murilo.bookshelf_manager.exception.NotFoundException;
 import com.murilo.bookshelf_manager.repository.CategoriaRepository;
+import com.murilo.bookshelf_manager.repository.LivroRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -16,6 +18,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CategoriaService {
     private final CategoriaRepository categoriaRepository;
+
+    private final LivroRepository livroRepository;
 
 
     //post
@@ -79,6 +83,10 @@ public class CategoriaService {
     public void deleteCategoria(Long id){
         Categoria categoriaEncontrada = categoriaRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Categoria não encontrada"));
+
+        if(livroRepository.existsByCategoriaId(id)) {
+            throw new BusinessException("Não é possível excluir uma categoria que possui livros cadastrados");
+        }
 
         categoriaRepository.delete(categoriaEncontrada);
     }

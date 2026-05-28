@@ -13,6 +13,8 @@ public interface LivroRepository extends JpaRepository<Livro,Long> {
 
         boolean existsByAutorId(Long autorId);
 
+        boolean existsByCategoriaId(Long categoriaId);
+
         Page<Livro> findByUsuario(Usuario usuario, Pageable pageable);
 
         Optional<Livro> findByIdAndUsuario(Long id, Usuario usuario);
