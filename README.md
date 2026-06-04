@@ -17,7 +17,6 @@ A psicóloga possuía um acervo grande de livros e frequentemente perdia o contr
 - Controle de empréstimos com nome da pessoa, data de empréstimo e data de devolução
 - Status automático do livro (Disponível / Emprestado)
 - Autenticação com JWT — cada usuário acessa apenas seu próprio acervo
-- Integração com Google Books API no frontend para preenchimento automático de dados do livro
 
 ---
 
