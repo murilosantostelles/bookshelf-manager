@@ -6,7 +6,7 @@ on:
   pull_request:
     branches: [main]
 
-jobs: #job para rodar testes automaticamente
+jobs:
   build:
     runs-on: ubuntu-latest
 
@@ -22,16 +22,16 @@ jobs: #job para rodar testes automaticamente
       - name: Build and test
         run: mvn clean test
 
-deploy:
-  needs: build
-  runs-on: ubuntu-latest
-  if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
 
-  steps:
-    - uses: actions/checkout@v4
+    steps:
+      - uses: actions/checkout@v4
 
-    - name: Deploy to Railway
-      uses: railwayapp/railway-deploy@v1
-      with:
-        railway-token: ${{ secrets.RAILWAY_TOKEN }}
-        service: bookshelf-manager
+      - name: Deploy to Railway
+        uses: railwayapp/railway-deploy@v1
+        with:
+          railway-token: ${{ secrets.RAILWAY_TOKEN }}
+          service: bookshelf-manager
