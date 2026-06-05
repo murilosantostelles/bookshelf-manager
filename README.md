@@ -2,6 +2,8 @@
 
 Sistema web de gerenciamento de acervo pessoal de livros com controle de empréstimos. Projeto desenvolvido para uso real por uma psicóloga que precisava rastrear quais livros estavam em sua casa e quais estavam emprestados para outras pessoas.
 
+🌐 **[API em produção](https://bookshelf-manager-production.up.railway.app/swagger-ui/index.html)** — documentação interativa via Swagger
+
 ---
 
 ## 🎯 Sobre o Projeto
@@ -17,6 +19,9 @@ A psicóloga possuía um acervo grande de livros e frequentemente perdia o contr
 - Controle de empréstimos com nome da pessoa, data de empréstimo e data de devolução
 - Status automático do livro (Disponível / Emprestado)
 - Autenticação com JWT — cada usuário acessa apenas seu próprio acervo
+- Cache nos endpoints de listagem para otimização de performance
+- Validação de regras de negócio (ex: não é possível emprestar um livro já emprestado)
+- Pipeline de CI/CD com execução automática de testes e deploy contínuo
 
 ---
 
@@ -24,9 +29,7 @@ A psicóloga possuía um acervo grande de livros e frequentemente perdia o contr
 
 Antes de iniciar o desenvolvimento, o banco de dados foi modelado no StarUML seguindo boas práticas de modelagem relacional, definindo entidades, atributos, chaves primárias, chaves estrangeiras e relacionamentos.
 
-<!-- Insira a imagem da modelagem abaixo -->
 <img width="1072" height="598" alt="image" src="https://github.com/user-attachments/assets/dcb9c075-40b5-47a7-a54e-8a563831dfaa" />
-
 
 ---
 
@@ -54,7 +57,11 @@ Antes de iniciar o desenvolvimento, o banco de dados foi modelado no StarUML seg
 - Mockito
 
 **CI/CD**
-- GitHub Actions
+- GitHub Actions (CI — testes automáticos a cada push)
+- Railway (CD — deploy automático após testes passarem)
+
+**Deploy**
+- Railway
 
 **Frontend** *(em desenvolvimento)*
 - React.js + Vite
@@ -109,7 +116,7 @@ A API utiliza autenticação stateless com JWT. O fluxo é:
 | GET | `/autores` | Listar autores |
 | GET | `/categorias` | Listar categorias |
 
-A documentação completa está disponível via Swagger em `/swagger-ui/index.html` com a aplicação rodando.
+A documentação completa está disponível via Swagger em `/swagger-ui/index.html`.
 
 ---
 
@@ -130,7 +137,7 @@ docker compose up -d
 
 **3. Configure as variáveis de ambiente**
 
-Crie um arquivo `.env` na raiz ou configure as variáveis diretamente:
+As variáveis já possuem valores default para desenvolvimento local no `application.yml`. Para customizar, configure:
 ```
 JWT_KEY=sua-chave-secreta-aqui
 JWT_EXPIRATION=900000
@@ -156,6 +163,18 @@ Os testes unitários cobrem os Services com JUnit 5 e Mockito, validando regras 
 - Impedimento de exclusão de autor com livros cadastrados
 - Impedimento de exclusão de categoria com livros cadastrados
 - Validação de credenciais no login
+- Isolamento de dados por usuário autenticado
+
+---
+
+## 🔄 CI/CD
+
+A cada push na branch `main`:
+
+1. **GitHub Actions** executa todos os testes automaticamente
+2. **Railway** detecta o push e realiza o deploy em produção automaticamente
+
+O deploy só acontece após os testes passarem, garantindo que código quebrado nunca vá para produção.
 
 ---
 
@@ -171,11 +190,15 @@ src/main/java/com/murilo/bookshelf_manager/
 ├── entity/             # Entidades JPA
 ├── enums/              # Enum de Status do livro
 ├── exception/          # Exceções customizadas e GlobalExceptionHandler
+├── handler/            # GlobalExceptionHandler
 ├── repository/         # Interfaces Spring Data JPA
 └── service/            # Regras de negócio
 src/main/resources/
-├── db/migration/       # Migrations Flyway (V1 a V7)
+├── db/migration/       # Migrations Flyway (V1 a V6)
 └── application.yml
+.github/
+└── workflows/
+    └── pipeline.yaml   # CI/CD Pipeline
 ```
 
 ---
