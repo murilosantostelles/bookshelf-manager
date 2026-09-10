@@ -34,8 +34,8 @@ public class SecurityConfiguration {
                 .cors(cors -> cors.configurationSource(request -> {
                     CorsConfiguration config = new CorsConfiguration();
                     config.setAllowedOrigins(List.of(
-                            "http://localhost:5173",  // react dev
-                            "https://bookshelf-manager-production.up.railway.app"
+                            "http://localhost:5173",
+                            "https://bookshelf-manager-two.vercel.app"
                     ));
                     config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH"));
                     config.setAllowedHeaders(List.of("*"));
@@ -60,7 +60,7 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder(){ //criptografar senha
+    public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
 
@@ -68,5 +68,4 @@ public class SecurityConfiguration {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config){
         return config.getAuthenticationManager();
     }
-
 }
