@@ -2,7 +2,8 @@
 
 Sistema web de gerenciamento de acervo pessoal de livros com controle de empréstimos. Projeto desenvolvido para uso real por uma psicóloga que precisava rastrear quais livros estavam em sua casa e quais estavam emprestados para outras pessoas.
 
-🌐 **[API em produção](https://bookshelf-manager-production.up.railway.app/swagger-ui/index.html)** — documentação interativa via Swagger
+🌐 **[API em produção](https://bookshelf-manager.onrender.com/swagger-ui/index.html)** — documentação interativa via Swagger
+🖥️ **[Frontend](https://bookshelf-manager-two.vercel.app)** — interface web do sistema
 
 ---
 
@@ -58,13 +59,12 @@ Antes de iniciar o desenvolvimento, o banco de dados foi modelado no StarUML seg
 
 **CI/CD**
 - GitHub Actions (CI — testes automáticos a cada push)
-- Railway (CD — deploy automático após testes passarem)
+- Render (CD — deploy automático após testes passarem)
 
 **Deploy**
-- Railway
-
-**Frontend** *(em desenvolvimento)*
-- React.js + Vite
+- Render (backend)
+- Neon (banco de dados PostgreSQL)
+- Vercel (frontend)
 
 ---
 
@@ -172,7 +172,7 @@ Os testes unitários cobrem os Services com JUnit 5 e Mockito, validando regras 
 A cada push na branch `main`:
 
 1. **GitHub Actions** executa todos os testes automaticamente
-2. **Railway** detecta o push e realiza o deploy em produção automaticamente
+2. **Render** detecta o push e realiza o deploy em produção automaticamente
 
 O deploy só acontece após os testes passarem, garantindo que código quebrado nunca vá para produção.
 
